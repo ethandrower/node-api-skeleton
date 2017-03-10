@@ -4,18 +4,27 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var morgan = require('morgan');
+
+var passport = require('passport');
+
+
+var User = require('./app/user');
+var mongoose = require('mongoose');
+var jwt = require('jwt-simple');
+
+
 
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 
+app.use(morgan('dev'));
 
-var MarketData = require('./app/marketdata');
 
 
 var port = 8080;
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://writer:drower4@ds157479.mlab.com:57479/marketdata-ethandrower');
+mongoose.connect('mongodb://newfm-db:drower4@ds125060.mlab.com:25060/newfm');
 
 //Router
 
@@ -51,7 +60,24 @@ router.route('/marketdata')
 
   });
 
+router.route('/signup')
+.post(function(req, res) {
+  if(!req.body.name || !req.body.password){
+    res.json({success: false, msg: 'Fill out form completely'});
+  }else{
+    var newUsesr = new User ({
+      username: req.body.name,
+      password: req.body.password
+    });
+    newUser.save(function(err){
+      if(err){
+        return res.json({success: false, msg:'error username exists'});
 
+      } 
+      res.json({succss: true, msg: 'created user'});
+    });
+  }
+});
 
 
 
